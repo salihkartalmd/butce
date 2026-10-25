@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Bütçe</title>
+  <meta name="description" content="Dönem bazlı kişisel bütçe ve günlük limit takibi">
+  <meta name="theme-color" content="#eef1f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#070912" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Tema, ilk boyamadan önce uygulansın (yanıp sönme olmasın)
+    try {
+      const t = JSON.parse(localStorage.getItem('butce-takip:v1') || '{}')?.settings?.theme;
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch {}
+  </script>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span>
+  </div>
+
+  <!-- Cam kırılma filtresi (yalnızca Chromium'da etkin; diğerlerinde sade bulanıklık) -->
+  <svg class="svg-defs" aria-hidden="true" width="0" height="0">
+    <filter id="lg-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feImage id="lg-map" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="map"/>
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="34" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
+  <header class="topbar" id="topbar">
+    <div class="topbar-inner glass">
+      <h1 id="title">Bugün</h1>
+      <span id="subtitle" class="muted"></span>
+    </div>
+  </header>
+
+  <main id="app">
+    <section class="view" data-view="today" id="view-today"></section>
+    <section class="view" data-view="history" id="view-history" hidden></section>
+    <section class="view" data-view="analysis" id="view-analysis" hidden></section>
+    <section class="view" data-view="settings" id="view-settings" hidden></section>
+  </main>
+
+  <nav class="tabbar" id="tabbar" aria-label="Ana menü">
+    <div class="tabbar-glass glass" id="tabbar-glass">
+      <span class="tab-indicator" id="tab-indicator" aria-hidden="true"></span>
+      <button class="tab" data-tab="today" aria-label="Bugün">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Bugün</span>
+      </button>
+      <button class="tab" data-tab="history" aria-label="Hareketler">
+        <svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></svg><span>Hareketler</span>
+      </button>
+      <span class="tab-gap" aria-hidden="true"></span>
+      <button class="tab" data-tab="analysis" aria-label="Analiz">
+        <svg viewBox="0 0 24 24"><path d="M5 19V11M10 19V6M15 19v-5M20 19V9"/></svg><span>Analiz</span>
+      </button>
+      <button class="tab" data-tab="settings" aria-label="Ayarlar">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg><span>Ayarlar</span>
+      </button>
+    </div>
+    <button class="fab glass" id="fab" aria-label="Yeni kayıt ekle">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </nav>
+
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="sheet glass" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" aria-hidden="true" inert>
+    <div class="sheet-handle" id="sheet-handle"><span></span></div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+
+  <div class="dialog-backdrop" id="dialog" hidden></div>
+  <div class="toast glass" id="toast" role="status" aria-live="polite"></div>
+  <div class="setup" id="setup" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

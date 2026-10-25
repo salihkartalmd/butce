@@ -1,0 +1,9 @@
+{
+  "name": "butce-takip",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "TZ=Europe/Istanbul node --test tests/*.test.mjs",
+    "start": "node serve.mjs"
+  }
+}
